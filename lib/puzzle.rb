@@ -12,17 +12,45 @@ class Puzzle
       end
     end
     @piezas[-1] = Pieza.new(0,filas-1,columnas-1)
-    desordenar!(desordenar_n)
+    desordenar! desordenar_n
   end
 
   def desordenar!(n)
     n.times do
       vacio = buscar_vacio
-      adyacentes = buscar_adyacentes(vacio)
-      mover!(adyacentes[rand(adyacentes.size)], vacio)
+      adyacentes = buscar_adyacentes vacio
+      mover! adyacentes[rand(adyacentes.size)], vacio
     end
   end
 
+  def ordenar_random!
+    @pasos = 0
+    until solucion?
+      vacio = buscar_vacio
+      adyacentes_vacio = buscar_adyacentes vacio
+      adyacente_random = adyacentes_vacio[rand(adyacentes_vacio.size)]
+      mover! adyacente_random, vacio
+      @pasos += 1
+    end
+  end
+
+  def ordenar_cuasirandom!
+    @pasos = 0
+    adyacente_anterior = nil
+    until solucion?
+      vacio = buscar_vacio
+      adyacentes_vacio = buscar_adyacentes vacio
+      adyacente_random = adyacentes_vacio[rand(adyacentes_vacio.size)]
+      until adyacente_random.valor != adyacente_anterior
+        adyacente_random = adyacentes_vacio[rand(adyacentes_vacio.size)]
+      end
+      adyacente_anterior = adyacente_random.valor
+      mover! adyacente_random, vacio
+      @pasos += 1
+
+    end
+  end
+  
   def piezas=(p)
     (@filas*@columnas).times{ |i| @piezas[i].valor = p[i] }
   end
@@ -65,4 +93,3 @@ class Puzzle
 
 
 end
-
