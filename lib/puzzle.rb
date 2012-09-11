@@ -2,7 +2,7 @@ class Puzzle
 
   attr_reader	:piezas, :pasos, :filas, :columnas
   
-  def initialize(filas,columnas,desordenar_n = 50)
+  def initialize(filas,columnas,desordenar_n = 0)
     v = 0
     @filas, @columnas = filas, columnas
     @piezas = []
@@ -12,7 +12,7 @@ class Puzzle
       end
     end
     @piezas[-1] = Pieza.new(0,filas-1,columnas-1)
-    desordenar!(desordenar_n)
+    desordenar!(desordenar_n) if desordenar_n > 0
   end
 
   def desordenar!(n)
