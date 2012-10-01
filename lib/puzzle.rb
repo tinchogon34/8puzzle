@@ -42,9 +42,9 @@ class Puzzle
   end
 
   def buscar_adyacentes(pieza)
-    p1 = buscar_posicion(pieza.fila-1,pieza.columna)
+    p3 = buscar_posicion(pieza.fila-1,pieza.columna)
         p2 = buscar_posicion(pieza.fila,pieza.columna+1)
-        p3 = buscar_posicion(pieza.fila+1,pieza.columna)
+        p1 = buscar_posicion(pieza.fila+1,pieza.columna)
         p4 = buscar_posicion(pieza.fila,pieza.columna-1)
     [p1,p2,p3,p4].compact
   end

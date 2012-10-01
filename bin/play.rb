@@ -5,7 +5,7 @@ require_relative '../lib/puzzle'
 require_relative '../lib/jugada'
 
 def play
-  @profundidad, padre = 0, 0
+  @profundidad, padre, @pasos = 0, 0, 0
   @jugadas = []
   puzzle = Puzzle.new(3,3,50)
   @jugadas[@profundidad] = [Jugada.new(puzzle,nil)]
@@ -18,6 +18,7 @@ def play
       jugada.puzzle.buscar_adyacentes(vacio).each do |pieza|
         new_puzzle = DeepClone.clone jugada.puzzle
         new_puzzle.mover!(new_puzzle.buscar_valor(pieza.valor), new_puzzle.buscar_vacio)
+        @pasos += 1
         unless lista.include?(new_puzzle.label)
           @jugadas[@profundidad] << Jugada.new(new_puzzle,jugada)
           lista << new_puzzle.label
@@ -42,10 +43,11 @@ def imprimir
   end
   puts solucion.reverse.join("\n")
   puts "Cantidad de pasos: #{solucion.size - 1}"
+  puts "Pasos: #{@pasos}"
 end
 
 Benchmark.bm do |b|
-  b.report("Ordenar:") { play }
+  b.report("Busqueda en anchura:") { play }
 end
 
 imprimir
