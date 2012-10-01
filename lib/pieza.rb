@@ -5,5 +5,4 @@ class Pieza
   def initialize(valor,fila,columna)
     @valor, @fila, @columna = valor, fila, columna
   end
-
 end

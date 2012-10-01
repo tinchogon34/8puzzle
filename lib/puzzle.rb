@@ -28,22 +28,24 @@ class Puzzle
   end
 
   def buscar_valor(x)
-    @piezas.select { |pieza| pieza.valor == x }.first
+    @piezas.each { |pieza| return pieza if pieza.valor == x }
+    return nil
   end
 
   def buscar_posicion(fila,columna)
-    @piezas.select { |pieza| pieza.fila == fila && pieza.columna == columna  }.first
+    @piezas.each { |pieza| return pieza if pieza.fila == fila &&
+                  pieza.columna == columna }
+    return nil
   end
-
   def buscar_vacio
     buscar_valor(0)
   end
 
   def buscar_adyacentes(pieza)
-    p1 = buscar_posicion(pieza.fila,pieza.columna-1)
-    p2 = buscar_posicion(pieza.fila,pieza.columna+1)
-    p3 = buscar_posicion(pieza.fila-1,pieza.columna)
-    p4 = buscar_posicion(pieza.fila+1,pieza.columna)
+    p1 = buscar_posicion(pieza.fila-1,pieza.columna)
+        p2 = buscar_posicion(pieza.fila,pieza.columna+1)
+        p3 = buscar_posicion(pieza.fila+1,pieza.columna)
+        p4 = buscar_posicion(pieza.fila,pieza.columna-1)
     [p1,p2,p3,p4].compact
   end
 
@@ -52,17 +54,20 @@ class Puzzle
   end
 
   def solucion?
-    @piezas.map{ |pieza| pieza.valor } == (1..piezas.size-1).to_a.push(0)
+    @piezas.map { |pieza| pieza.valor } == (1..piezas.size-1).to_a.push(0)
   end
 
   def to_s
     puzzle = ""		
     (@filas*@columnas).times do |i|
-      puzzle << ((i+1) % @filas == 0 ? @piezas[i].valor.to_s + "  |  " + "\n"  : @piezas[i].valor.to_s + "  |  ")			
+      puzzle << ((i+1) % @filas == 0 ? @piezas[i].valor.to_s + "  |  " + "\n" 
+                 : @piezas[i].valor.to_s + "  |  ")			
     end
     puzzle
   end
 
-
+  def label
+    @piezas.map { |pieza| pieza.valor }.join
+  end
 end
 
