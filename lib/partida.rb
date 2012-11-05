@@ -85,7 +85,7 @@ class Partida
     end
     solucion.reverse!
     while m1.padre
-      solucion << m1.direccion
+      solucion << m1.direccion.to_s
       m1 = m1.padre
     end
     puts [@movimientos[0].first.puzzle.to_json].concat solucion

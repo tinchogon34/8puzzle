@@ -42,14 +42,14 @@ class Puzzle
   end
 
   def buscar_adyacentes(pieza)
-    p2 = buscar_posicion(pieza.fila-1,pieza.columna)
-    p3 = buscar_posicion(pieza.fila,pieza.columna+1)
-    p1 = buscar_posicion(pieza.fila+1,pieza.columna)
-    p4 = buscar_posicion(pieza.fila,pieza.columna-1)
-    p1.direccion = 'abajo' unless p1.nil?
-    p2.direccion = 'derecha' unless p2.nil?
-    p3.direccion = 'arriba' unless p3.nil?
-    p4.direccion = 'izquierda' unless p4.nil?
+    p1 = buscar_posicion(pieza.fila-1,pieza.columna)
+    p2 = buscar_posicion(pieza.fila,pieza.columna-1)
+    p3 = buscar_posicion(pieza.fila+1,pieza.columna)
+    p4 = buscar_posicion(pieza.fila,pieza.columna+1)
+    p1.direccion = 'arriba' unless p1.nil?
+    p2.direccion = 'izquierda' unless p2.nil?
+    p3.direccion = 'abajo' unless p3.nil?
+    p4.direccion = 'derecha' unless p4.nil?
     [p1,p2,p3,p4].compact
   end
 
