@@ -1,9 +1,10 @@
 class Partida
+  @@pasos = 0
   def jugar
     @profundidad, padre, @pasos = 0, 0, 0
     @movimientos = []
     @movimientos2 = []
-    puzzle = Puzzle.new(3,3,50)
+    puzzle = Puzzle.new(3,3,500)
     puzzle2 = Puzzle.new(3,3)
     @movimientos[@profundidad] = [Movimiento.new(puzzle,nil, nil)]
     @movimientos2[@profundidad] = [Movimiento.new(puzzle2,nil, nil)]
@@ -11,13 +12,13 @@ class Partida
     @lista2 = [puzzle2.label]
     until interseccion?
       @profundidad += 1
-      puts @profundidad
       @movimientos[@profundidad] = []
       @movimientos2[@profundidad] = []
 
       @movimientos[@profundidad-1].each do |movimiento|
         vacio = movimiento.puzzle.buscar_vacio
         movimiento.puzzle.buscar_adyacentes(vacio).each do |pieza|
+          @@pasos += 1
           new_puzzle = DeepClone.clone movimiento.puzzle
           new_puzzle.mover!(new_puzzle.buscar_valor(pieza.valor), new_puzzle.buscar_vacio)
           unless @lista.include?(new_puzzle.label)
@@ -30,6 +31,7 @@ class Partida
       @movimientos2[@profundidad-1].each do |movimiento|
         vacio = movimiento.puzzle.buscar_vacio
         movimiento.puzzle.buscar_adyacentes(vacio).each do |pieza|
+          @@pasos += 1
           new_puzzle = DeepClone.clone movimiento.puzzle
           new_puzzle.mover!(new_puzzle.buscar_valor(pieza.valor), new_puzzle.buscar_vacio)
           unless @lista2.include?(new_puzzle.label)
@@ -88,7 +90,8 @@ class Partida
       solucion << m1.direccion.to_s
       m1 = m1.padre
     end
-    puts [@movimientos[0].first.puzzle.to_json].concat solucion
+    puts @@pasos
+    @@pasos = 0
     [@movimientos[0].first.puzzle.to_json].concat solucion
   end
 end
