@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)http://html5.brucealderman.info/sliding.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Sliding Puzzle</title>
+    <style>
+      .picture {
+        /*border: 1px solid black;*/
+        margin-left: 400px;
+        margin-top: 35px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main" class="main">
+      <canvas id="puzzle" width="600px" height="600px" class="picture"></canvas>
+    </div>
+    <br />
+    <input type="button" onclick="resolver()" value="Resolver" /> &nbsp; <input type="button" onclick="reiniciar()" value="Reiniciar" />
+    <script>
+      var resultado = eval(<%= @partida.imprimir %>);
+      var desordenado = JSON.parse(resultado.splice(0,1)).data.piezas;
+      var desordenadoBK = desordenado;
+      var movimientos = resultado;
+      var intervalId = 0;
+
+      var context = document.getElementById('puzzle').getContext('2d');
+
+      var img = new Image();
+      //img.src = 'http://www.brucealderman.info/Images/dimetrodon.jpg';
+      img.src = 'redhat-logo.jpeg';
+      img.addEventListener('load', drawTiles, false);
+
+      var boardSize = document.getElementById('puzzle').width;
+      var tileCount = Math.sqrt(desordenado.length);
+
+      var tileSize = boardSize / tileCount;
+
+      var boardParts = new Object;
+      setBoard();
+
+      function setBoard() {
+        var k = 0;
+        boardParts = new Array(tileCount);
+        for (var i = 0; i < tileCount; i++) {
+          boardParts[i] = new Array(tileCount);
+          for (var j = 0; j < tileCount; j++) {
+            boardParts[i][j] = new Object;
+            boardParts[i][j].x = desordenado[k].fila;
+            boardParts[i][j].y = desordenado[k].columna;
+            boardParts[i][j].valor = desordenado[k].valor;
+            k++;
+          }
+        }
+        solved = false;
+      }
+
+      function drawTiles() {
+        context.clearRect ( 0 , 0 , boardSize , boardSize );
+        for (var i = 0; i < tileCount; i++) {
+          for (var j = 0; j < tileCount; j++) {
+            var x = boardParts[i][j].x;
+            var y = boardParts[i][j].y;
+            if(boardParts[i][j].valor != 0)
+            context.drawImage(img, j * tileSize, i * tileSize, tileSize, tileSize, y * tileSize, x * tileSize, tileSize, tileSize);
+            context.fillText(boardParts[i][j].valor,y * tileSize + 50, x * tileSize + 120);
+          }
+        }
+      }
+
+
+      function slideTile(emptyLoc, fromLoc) {
+        if (!solved) {
+          auxX = emptyLoc.x;
+          auxY = emptyLoc.y;
+          emptyLoc.x = fromLoc.x;
+          emptyLoc.y = fromLoc.y;
+          fromLoc.x = auxX;
+          fromLoc.y = auxY;
+          drawTiles();
+        }
+      }
+
+      function buscarPorPosicion(posX, posY){
+        for(var x in boardParts){
+          for(var y in boardParts[x]){
+            if(boardParts[x][y].x == posX && boardParts[x][y].y == posY)
+            return boardParts[x][y];
+          }
+        }
+        return null;
+      }
+
+      function buscarPorValor(valor){
+        for(var x in boardParts){
+          for(var y in boardParts[x]){
+            if(boardParts[x][y].valor == valor)
+            return boardParts[x][y];
+          }
+        }
+        return null;
+      }
+
+      function getAdyacentes(){
+        emptyLoc = buscarPorValor(0);
+        a1 = buscarPorPosicion(emptyLoc.x, emptyLoc.y - 1);
+        a2 = buscarPorPosicion(emptyLoc.x, emptyLoc.y + 1);
+        a3 = buscarPorPosicion(emptyLoc.x - 1, emptyLoc.y);
+        a4 = buscarPorPosicion(emptyLoc.x + 1, emptyLoc.y);
+
+        array = new Array();
+        if(a1 != null){
+          a1.direccion = 'izquierda'
+          array.push(a1);
+        }
+        if(a2 != null){
+          a2.direccion = 'derecha'
+          array.push(a2);
+        }
+        if(a3 != null){
+          a3.direccion = 'arriba'
+          array.push(a3);
+        }
+        if(a4 != null){
+          a4.direccion = 'abajo'
+          array.push(a4);
+        }
+        return array;
+      }
+
+      function mover(){
+        move = movimientos.pop();
+        if(move != null){
+          adyacentes = getAdyacentes();
+          adyacente = null;
+          for(i in adyacentes){
+            if(move == adyacentes[i].direccion)
+            adyacente = adyacentes[i]
+          }
+          if(adyacente != null){
+            slideTile(emptyLoc, adyacente);
+            drawTiles();
+          }
+        }
+        else{
+          clearInterval(intervalId);
+          context.drawImage(img, (tileCount-1) * tileSize, (tileCount-1) * tileSize, tileSize, tileSize, (tileCount-1) * tileSize, (tileCount-1) * tileSize, tileSize, tileSize);
+          context.fillText(boardParts[tileCount-1][tileCount-1].valor, (tileCount-1) * tileSize + 50, (tileCount-1) * tileSize + 120)
+        }
+      }
+      function resolver(){
+          intervalId = setInterval(mover, 500);
+        }
+
+        function reiniciar(){
+          movimientos = resultado;
+          desordenado = desordenadoBK;
+          setBoard();
+          drawTiles(); 
+      }
+
+      document.addEventListener('DOMContentLoaded',function(){
+        context.lineWidth = 2;
+        context.fillStyle = "blue";
+        context.font = "72px arial";
+        context.stroke();
+      });
+    </script>
+
+
+</body></html>
